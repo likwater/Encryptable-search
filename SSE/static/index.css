@@ -1,0 +1,135 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #82D0FF;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 48px;
+}
+
+/* .container 的修改 */
+.container {
+    max-width: 800px;  /* 增加容器的最大宽度 */
+    min-height: 360px;
+    margin: 30px auto;
+    padding: 40px;  /* 增加内边距 */
+    background-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);  /* 稍微增加阴影 */
+    border-radius: 10px;  /* 适当增加圆角 */
+}
+
+.container h2 {
+    text-align: center;
+    font-size: 42px;
+    color: #333;
+}
+
+/* .links 的修改 */
+.links {
+    display: flex;
+    justify-content: center;
+    margin-top: 80px;  /* 你可以继续使用之前的调整 */
+}
+
+/* 让按钮更大 */
+.links a {
+    display: inline-block;
+    padding: 24px 48px;  /* 增加上下和左右的间距，让按钮更大 */
+    margin: 10px;
+    text-decoration: none;
+    background-color: #007BFF;
+    color: white;
+    font-size: 20px;  /* 增大字体 */
+    border-radius: 8px;  /* 增加圆角，使按钮更圆滑 */
+    transition: background-color 0.3s;
+}
+
+.links a:hover {
+    background-color: #0056b3;
+}
+
+/* 给 SSE 添加一个新的容器并设置背景色 */
+.sse-container {
+    background-color: #BEECFF;  /* 设置背景色为淡蓝色，你可以根据需求调整 */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;  /* 增加容器底部间距，避免与下面的链接按钮重叠 */
+}
+
+.sse-container h2 {
+    text-align: center;
+    font-size: 42px;
+    color: #333;
+}
+
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Basic styling for the body */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fc;
+    color: #333;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Header styling */
+h1 {
+    color: #2c3e50;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+/* General link styles */
+a {
+    color: #3498db;
+    text-decoration: none;
+    font-size: 1.2em;
+    margin: 0 15px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background-color: #ecf0f1;
+    transition: background-color 0.3s ease;
+}
+
+a:hover {
+    background-color: #3498db;
+    color: white;
+}
+
+/* Responsive layout */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2em;
+    }
+    a {
+        display: block;
+        margin: 10px 0;
+    }
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='search.css') }}">
+</head>
+<body>
+    <h1>检索文件</h1>
+
+    <form action="{{ url_for('search_keyword') }}" method="POST">
+        <label for="keywords">检索关键词（每个关键词之间用空格间隔）:</label>
+        <input type="text" name="keywords" placeholder="Search for keywords"><br>
+
+        <label for="password">检索密钥:</label>
+        <input type="password" name="password" placeholder="Enter password"><br>
+
+        <button type="submit">检索</button>
+    </form>
+
+    <h2>检索结果:</h2>
+    <ul id="search-results">
+        {% if results %}
+            {% for file_name, file_content in results %}
+                <p>
+                    <a href="#" onclick="downloadFile('{{ file_name }}', '{{ file_content }}')">{{ file_name }}</a><br>
+                </p>
+            {% endfor %}
+        {% endif %}
+        {% if changed_files %}
+            {% for changed_file in changed_files %}
+                <p class="changed">{{ changed_file }} (文件内容被篡改)</p><br>
+            {% endfor %}
+        {% endif %}
+        {% if no_results %}
+            <p class="no-results">没有检索到对应的文件。</p>
+        {% endif %}
+    </ul>
+    <hr>
+    <a href="{{ url_for('index') }}">返回主页</a>
+
+    <script>
+        function hexToBytes(hex) {
+            const bytes = [];
+            for (let c = 0; c < hex.length; c += 2) {
+                bytes.push(parseInt(hex.substr(c, 2), 16));
+            }
+            return new Uint8Array(bytes);
+        }
+
+        function downloadFile(fileName, fileHex) {
+            const bytes = hexToBytes(fileHex);
+            const blob = new Blob([bytes], { type: 'application/octet-stream' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+        }
+    </script>
+
+</body>
+</html>

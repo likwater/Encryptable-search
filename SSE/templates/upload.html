@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上传文件</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='upload.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@latest"></script>
+
+    <!-- Custom CSS for SweetAlert2 -->
+    <style>
+        /* 自定义弹窗样式 */
+        .swal2-popup.small-popup {
+            width: 500px;  /* 设置弹窗宽度 */
+            padding: 20px;  /* 设置内边距 */
+            font-size: 16px;  /* 设置字体大小 */
+        }
+        .swal2-actions {
+            display: flex;
+            justify-content: center;  /* 居中对齐按钮 */
+            gap: 15px;  /* 按钮之间的间距 */
+        }
+        .swal2-confirm, .swal2-cancel {
+            flex-grow: 1;  /* 使按钮自适应宽度 */
+            font-size: 16px;  /* 按钮字体大小 */
+            padding: 10px 20px;  /* 调整按钮的内边距 */
+            border-radius: 5px;  /* 圆角按钮 */
+        }
+        .swal2-confirm {
+            background-color: #4CAF50;  /* 确认按钮的绿色背景 */
+            color: white;  /* 按钮文字颜色 */
+            border: none;  /* 去除边框 */
+        }
+        .swal2-cancel {
+            background-color: #4CAF50;  /* 取消按钮的红色背景 */
+            color: white;  /* 按钮文字颜色 */
+            border: none;  /* 去除边框 */
+        }
+        .swal2-title {
+            font-size: 24px;
+        }
+        .swal2-content {
+            font-size: 16px;
+        }
+        .swal2-icon {
+            width: 48px;  /* 设置图标的宽度 */
+            height: 48px;  /* 设置图标的高度 */
+        }
+        /* 自定义成功图标 */
+        .swal2-success .swal2-icon {
+            background-color: #4CAF50;  /* 成功图标背景颜色：绿色 */
+            border-radius: 50%;
+        }
+        .swal2-success .swal2-icon::before {
+            content: '';  /* 清空默认内容 */
+        }
+        .swal2-success .swal2-icon::after {
+            content: '';  /* 清空默认内容 */
+        }
+        .swal2-success .swal2-icon .swal2-success-ring {
+            display: none;  /* 隐藏默认的绿色圆圈 */
+        }
+        .swal2-success .swal2-icon .swal2-success-fix {
+            display: none;  /* 隐藏默认修复图标 */
+        }
+        .swal2-success .swal2-icon .swal2-success-line-tip,
+        .swal2-success .swal2-icon .swal2-success-line-long {
+            display: none;  /* 隐藏默认的绿色对勾 */
+        }
+        .swal2-success .swal2-icon {
+            background-image: url('https://cdn.jsdelivr.net/npm/sweetalert2@latest/icons/success.svg'); /* 使用外部绿色勾图标 */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>上传文件</h1>
+
+    <form action="{{ url_for('upload_file') }}" method="POST" id="upload-form" enctype="multipart/form-data">
+        <div class="file-name-container">
+            <input type="file" id="upload-file" style="display: none;">
+            <button type="button" class="upload-button" onclick="document.getElementById('upload-file').click()">选择文件</button>
+        </div>
+        <div class="file-info">
+            <div id="file-name"></div>
+            <span id="delete-file" onclick="deleteFile()" style="display:none;">删除</span>
+        </div>
+
+
+        <!-- Hidden fields to store file data -->
+        <input type="hidden" name="file_name" id="file-name-hidden">
+        <input type="hidden" name="file_content" id="file-content-hidden">
+
+        <label for="password">输入密钥:</label>
+        <input type="password" name="password" placeholder="Enter password" required><br>
+
+        <!-- Custom keyword inputs -->
+        <label for="keyword1">关键词（添加的关键词不超过5个，每个关键词中文长度不超过15个字，每个关键词之间用空格间隔） :</label>
+        <input type="text" name="keywords" placeholder="Enter keywords"><br>
+
+        <button type="submit">上传文件</button>
+    </form>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <script>
+        const fileInput = document.getElementById('upload-file');
+        const fileNameElement = document.getElementById('file-name');
+        const deleteFileButton = document.getElementById('delete-file');
+        const fileNameHidden = document.getElementById('file-name-hidden');
+        const fileContentHidden = document.getElementById('file-content-hidden');
+
+        // 处理文件选择
+        fileInput.onchange = handleFileInput;
+
+        function handleFileInput(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const fileContent = event.target.result;
+
+                    // 将文件内容转换为 Hex 格式
+                    const byteArray = new Uint8Array(fileContent);
+                    const hexString = byteArray.reduce((data, byte) => {
+                        return data + byte.toString(16).padStart(2, '0');
+                    }, '');
+
+                    // 更新文件信息显示
+                    fileNameElement.textContent = file.name;
+                    fileNameHidden.value = file.name;
+                    fileContentHidden.value = hexString;
+
+                    // 显示删除按钮
+                    deleteFileButton.style.display = 'inline';
+                };
+                reader.readAsArrayBuffer(file);  // 使用 ArrayBuffer 读取文件
+            }
+        }
+
+        // 删除文件的操作
+        function deleteFile() {
+            fileNameElement.textContent = '';
+            fileNameHidden.value = '';
+            fileContentHidden.value = '';
+            deleteFileButton.style.display = 'none';
+            fileInput.value = ''; // 重置文件输入框
+        }
+
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const password = document.querySelector('input[name="password"]').value;
+        const keywords = document.querySelector('input[name="keywords"]').value;
+
+        Swal.fire({
+            title: '您确定要上传此文件吗？',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            customClass: {
+                popup: 'small-popup',
+                actions: 'swal2-actions'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: '正在上传...',
+                    text: '请稍候...',
+                    allowOutsideClick: false,
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    },
+                    customClass: {
+                        popup: 'small-popup'
+                    }
+                });
+
+                const formData = new FormData();
+                formData.append('file_name', fileNameHidden.value);
+                formData.append('file_content', fileContentHidden.value);
+                formData.append('password', password);
+                formData.append('keywords', keywords);
+
+                fetch('{{ url_for("upload_file") }}', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    Swal.close();
+                    if (data.success) {
+                        Swal.fire({
+                            title: '成功!',
+                            text: '文件上传成功！',
+                            icon: 'success',
+                            customClass: {
+                                popup: 'small-popup',
+                            }
+                        }).then(() => {
+                            window.location.href = '/upload';
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '错误',
+                            text: '上传失败：' + data.message,
+                            icon: 'error',
+                            customClass: {
+                                popup: 'small-popup'
+                            }
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.close();
+                    Swal.fire({
+                        title: '错误',
+                        text: '发生了一个错误：' + error,
+                        icon: 'error',
+                        customClass: {
+                            popup: 'small-popup'
+                        }
+                    });
+                });
+            }
+        });
+    });
+    </script>
+    <a href="{{ url_for('index') }}">返回主页</a>
+</body>
+</html>

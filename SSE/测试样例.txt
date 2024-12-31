@@ -1,0 +1,10 @@
+document1: 123456; 你好 good hello
+document2: 123456; english 密码 hello
+document3: 123; 语言 文学 english 密码 hello
+document1: 123; 你好 good hello
+SSE: 123a; 密码 可加密搜索 AES hmac
+document5: 123; 语言 文学 你好 hello
+document4: 123; 你好 well hello (篡改)
+图1：123；图片 picture 桌面
+document5: 123456; 语言 文学 你好 hello
+robo.mp3: asd; 音乐 bibu mp3 节奏
